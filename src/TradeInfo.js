@@ -2,28 +2,31 @@ import React, {useState, useEffect} from 'react';
 import {Button, Card, Form, Row, Container, Col, Modal } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const TradeInfo = ({trade}) => {
+const TradeInfo = ({trade, index, setDeletEntry, setCurrentIndex}) => {
 
     const [refresh, setRefresh] = useState(false);
 
     return (
         <Form.Group as={Row} controlId="formHorizontalEmail">
             <Col>
-                <Form.Control placeholder={trade.name} onChange={(event) => setStockNameFromInput(event)}/>
+                <Form.Control value={trade.name} onChange={(event) => setStockNameFromInput(event)}/>
             </Col>
             <Col>
-                <Form.Control name="money" type="number" placeholder={trade.initial} onChange={(event) => setInitialPriceFromInput(event)}/>
+                <Form.Control name="money" type="number" value={trade.initial} onChange={(event) => setInitialPriceFromInput(event)}/>
             </Col>
             <Col>
-                <Form.Control type="number" placeholder={trade.quantity} onChange={(event) => setQuantityFromInput(event)}/>
+                <Form.Control type="number" value={trade.quantity} onChange={(event) => setQuantityFromInput(event)}/>
             </Col>
             <Col>
-                <Form.Control type="number" placeholder={trade.current} onChange={(event) => setCurrentPriceFromInput(event)}/>
+                <Form.Control type="number" value={trade.current} onChange={(event) => setCurrentPriceFromInput(event)}/>
             </Col>
             <Col>
                 <Form.Label>
-                    {getROI()}
+                <Form.Control type="number" disabled={true} placeholder={getROI()} />
                 </Form.Label>
+            </Col>
+            <Col>
+                <Button onClick={() => deleteEntry()}>delete</Button>
             </Col>
             
         </Form.Group>
@@ -52,6 +55,11 @@ const TradeInfo = ({trade}) => {
 
     function getROI(){
         return (trade.current - trade.initial) * trade.quantity
+    }
+
+    function deleteEntry(){
+        setCurrentIndex(index)
+        setDeletEntry(true)
     }
 
 

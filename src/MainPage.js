@@ -10,8 +10,28 @@ const MainPage = () => {
 
     const [trades, setTrades] = useState([]);
     const [refresh, setRefresh] = useState(false);
+    const [deleteEntry, setDeleteEntry] = useState(false);
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    if(deleteEntry){
+        var newTrades = []
+        for (let index = 0; index < trades.length; index++) {
+            if(index != currentIndex){
+                newTrades.push(trades[index])
+            }
+        }
+        console.log(currentIndex)
+        setTrades(newTrades)
+        console.log(trades)
+        setDeleteEntry(false);
+        
+    }
 
     return (
+        <div>
+        <Container>
+            <Button onClick={() => addNewTrade()}>Add New Row</Button>
+        </Container>
         <Container>
             <Form >
                 <Form.Group as={Row} controlId="formHorizontalEmail">
@@ -40,20 +60,25 @@ const MainPage = () => {
                             ROI
                         </Form.Label>
                     </Col>
+                    <Col>
+                        <Form.Label>
+                            Delete Entry
+                        </Form.Label>
+                    </Col>
                 </Form.Group>
                 {trades.map((trade, i) => (
-                    <TradeInfo trade={trade} />
+                    <TradeInfo trade={trade} index={i} setCurrentIndex={setCurrentIndex} setDeletEntry={setDeleteEntry}/>
                 ))}
             </Form>
-            <Button onClick={() => addNewTrade()}>Add New Row</Button>
         </Container>
+        </div>
     )
 
     function addNewTrade(){
         const newTrade = {
             "name": "",
             "initial": 0,
-            "current": 0,
+            "current": 5,
             "quantity": 0
         }
         trades.push(newTrade);
