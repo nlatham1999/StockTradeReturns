@@ -54,7 +54,9 @@ const TradeInfo = ({trade, index, setDeletEntry, setCurrentIndex}) => {
     }
 
     function getROI(){
-        return (trade.current - trade.initial) * trade.quantity
+        var ROI = (trade.current - trade.initial) * trade.quantity
+        trade.ROI = ROI;
+        return ROI;
     }
 
     function deleteEntry(){
