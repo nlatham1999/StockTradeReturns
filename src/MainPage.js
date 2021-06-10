@@ -1,5 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import {Button, Card, Form, Row, Container, Col, Modal } from 'react-bootstrap'
+
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
+import NavDropdown from "react-bootstrap/NavDropdown";
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import './TradeInfo'
@@ -23,11 +28,20 @@ const MainPage = () => {
     const [deleteEntry, setDeleteEntry] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [fileName, setFileName] = useState("");
+    const [deleteEverything, setDeleteEverything] = useState(false);
+    const [reallyAreDeletingEverything, setReallyAreDeletingEverything] = useState(false);
+
+
 
     useEffect(() => {
         addNewTrade()
         setFileName(getFileName());
       }, [])
+
+    if(reallyAreDeletingEverything){
+        setReallyAreDeletingEverything(false);
+        setTrades([])
+    }
 
     if(deleteEntry){
         var newTrades = []
@@ -47,15 +61,25 @@ const MainPage = () => {
 
     return (
         <div>
-        <Container>
-            <Button onClick={() => addNewTrade()}>Add New Row</Button>
-            <CSVLink filename={fileName} data={generate2DArray()}>Download as CSV</CSVLink>;
-            <Button onClick={()=>setRefresh(!refresh)}>Refresh</Button>
-            <ImportCSVFile setTrades={setTrades} />
-        </Container>
-        <Container>
-            <Form >
-                <Form.Group as={Row} controlId="formHorizontalEmail">
+        <Container style={{position: "fixed", zIndex: 1, paddingBottom: "1%", paddingTop: "1%", left: 0, right: 0, backgroundColor: "white"}}>
+            <Navbar>
+                <Button variant="outline-dark" onClick={() => addNewTrade()}>Add New Row</Button>
+                <Button variant="outline-dark" style={{marginLeft: "1%"}} onClick={()=>setRefresh(!refresh)}>Refresh</Button>
+                <Button variant="outline-danger" style={{marginLeft: "1%"}} onClick={() => deleteEveryThingClicked()}>Delete All Rows</Button>
+                <Navbar.Collapse style={{marginLeft: "1%"}} id="basic-navbar-nav">
+                    <Nav className="mr-auto">
+                        <NavDropdown title="Upload/Download" id="basic-nav-dropdown">          
+                            <CSVLink  style={{color: "black"}} filename={fileName} data={generate2DArray()}>Download as CSV</CSVLink>;
+                            <ImportCSVFile setTrades={setTrades} />
+                        </NavDropdown>
+                    </Nav>
+                </Navbar.Collapse>
+            </Navbar>
+            <Form>
+                
+                <Form.Group as={Row} 
+                // style={{position: "fixed", zIndex: 1, left: 0, right: 0, marginRight: "6%", marginLeft: "6%", backgroundColor: "#e0e0e0"}} 
+                controlId="formHorizontalEmail">
                     <Col>
                         <Form.Label>
                             stock name
@@ -87,11 +111,31 @@ const MainPage = () => {
                         </Form.Label>
                     </Col>
                 </Form.Group>
+            </Form>
+        </Container>
+        <Container style={{paddingTop: "10%"}}>
+            
+            <Form >
                 {trades.map((trade, i) => (
                     <TradeInfo trade={trade} index={i} setCurrentIndex={setCurrentIndex} setDeletEntry={setDeleteEntry}/>
                 ))}
             </Form>
         </Container>
+        <Modal show={deleteEverything} onHide={() => setDeleteEverything(false)} centered>
+                <Modal.Header closeButton>
+                <Modal.Title>Delete Everything?</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Are you really, really sure you want to delete everything?
+
+                    It is suggested that you make a backup before doing this.
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={() => setReallyAreDeletingEverything(true)}>yes</Button>
+                    <Button onClick={() => setDeleteEverything(false)}>no</Button>
+                </Modal.Footer>
+
+            </Modal>
         </div>
     )
 
@@ -123,6 +167,10 @@ const MainPage = () => {
             data.push(row);
         }
         return data;
+    }
+
+    function deleteEveryThingClicked(){
+        setDeleteEverything(true);
     }
 
     function getFileName(){
